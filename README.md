@@ -1,6 +1,8 @@
-![Fast forced alignment: a waveform aligned to the words “The statues there are broken,” with “statues” highlighted.](assets/cover.png)
+[![Fast forced alignment: a waveform aligned to the words “The statues there are broken,” with “statues” highlighted.](assets/cover.png)](https://bryanthornbury.com/posts/fast-forced-alignment/)
 
 # Fast Forced Aligner
+
+Read the blog post: [Fast Forced Alignment: Finding Where the Words Go](https://bryanthornbury.com/posts/fast-forced-alignment/).
 
 **Turn CTC frame scores and a known transcript into batched GPU alignments.**
 
