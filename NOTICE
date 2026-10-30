@@ -1,0 +1,19 @@
+Fast Forced Aligner
+Copyright 2026 Bryan Thornbury
+
+Original project code and documentation are licensed under the MIT License.
+See LICENSE.
+
+The source distribution includes a corrected benchmark comparator derived from
+MahmoudAshraf97/ctc-forced-aligner, revision
+64293cc6d711e57666c4a8b098e9fd93b381fd88:
+https://github.com/MahmoudAshraf97/ctc-forced-aligner
+
+benchmarks/patches/cpu_corrected.cpp and cpu_corrected.patch retain the upstream
+BSD-2-Clause terms. Copyright (c) 2026, Mahmoud Ashraf.
+The full license is in benchmarks/patches/LICENSE.ctc-forced-aligner; provenance
+and the modifications are described in benchmarks/patches/README.md.
+The comparator source also retains its upstream attribution to:
+https://github.com/flashlight/sequence/blob/main/flashlight/lib/sequence/criterion/cpu/ConnectionistTemporalClassificationCriterion.cpp
+
+The benchmark comparator is separate from the MIT-licensed alignment kernel.

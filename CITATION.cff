@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use Fast Forced Aligner in your research, please cite this software."
+type: software
+license: Apache-2.0
+title: "Fast Forced Aligner"
+authors:
+  - family-names: "Thornbury"
+    given-names: "Bryan"
+version: "0.1.0"
+url: "https://github.com/brthor/fast-forced-aligner"
+repository-code: "https://github.com/brthor/fast-forced-aligner"

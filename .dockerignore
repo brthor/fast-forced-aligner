@@ -1,0 +1,14 @@
+.git
+.local
+__pycache__
+*.egg-info
+build
+dist
+**/.local
+**/__pycache__
+**/.pytest_cache
+benchmarks/results
+benchmarks/reports
+.env
+.env.*
+!.env.example

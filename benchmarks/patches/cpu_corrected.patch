@@ -1,0 +1,74 @@
+--- upstream/forced_align_impl.cpp
++++ patches/cpu_corrected.cpp
+@@ -1,3 +1,9 @@
++// Adaptation of MahmoudAshraf97/ctc-forced-aligner at 64293cc6d711e57666c4a8b098e9fd93b381fd88.
++// See README.md and LICENSE.ctc-forced-aligner in this directory for provenance.
++#include <algorithm>
++#include <limits>
++#include <tuple>
++#include <vector>
+ #include <pybind11/pybind11.h>
+ #include <pybind11/numpy.h>
+ 
+@@ -28,6 +34,9 @@
+   auto logProbs_data = logProbs.template unchecked<3>();
+   auto targets_data = targets.template unchecked<2>();
+   auto paths_data = paths.template mutable_unchecked<2>();
++
++  // Array objects and their views stay alive; only C++ work follows this release.
++  py::gil_scoped_release release;
+ 
+   auto R = 0;
+   for (auto i = 1; i < L; i++) {
+@@ -95,7 +104,7 @@
+       if (x2 > x1 && x2 > x0) {
+         result = x2;
+         backPtrBit1[seek + i - startloop] = true;
+-      } else if (x1 > x0 && x1 > x2) {
++      } else if (x1 > x0) {
+         result = x1;
+         backPtrBit0[seek + i - startloop] = true;
+       } else {
+@@ -111,6 +120,7 @@
+   for (auto t = T - 1; t > -1; t--) {
+     auto lbl_idx = ltrIdx % 2 == 0 ? blank : targets_data(batchIndex, ltrIdx / 2);
+     paths_data(batchIndex, t) = lbl_idx;
++    if (t == 0) break; // The first frame has no predecessor to recover.
+     // Calculate backPtr value from bits
+     auto t_minus_one = t - 1 >= 0 ? t - 1 : 0;
+     auto backPtr_idx = backPtr_seek[t_minus_one] +
+@@ -127,6 +137,26 @@
+   if (logProbs.ndim() != 3) throw std::runtime_error("log_probs must be a 3-D array.");
+   if (targets.ndim() != 2) throw std::runtime_error("targets must be a 2-D array.");
+   if (logProbs.shape(0) != 1) throw std::runtime_error("Batch size must be 1.");
++
++  if (targets.shape(0) != 1) throw std::runtime_error("targets batch size must be 1.");
++  const auto V = logProbs.shape(2);
++  const auto L = targets.shape(1);
++  if (blank < 0 || blank >= V) throw std::runtime_error("blank index is out of range.");
++  if (L == 0) throw std::runtime_error("CPU control requires nonempty targets.");
++  if (logProbs.shape(1) > std::numeric_limits<int>::max() ||
++      L > (std::numeric_limits<int>::max() - 1) / 2)
++    throw std::runtime_error("CPU control requires int32-compatible frame and state counts.");
++  auto checked_targets = targets.unchecked<2>();
++  int64_t repeats = 0;
++  for (py::ssize_t i = 0; i < L; ++i) {
++    const auto label = checked_targets(0, i);
++    if (label < 0 || label >= V || label == blank)
++      throw std::runtime_error("target must be a nonblank vocabulary index.");
++    if (i && label == checked_targets(0, i - 1)) ++repeats;
++  }
++  // Keep the upstream adapter's conservative supported domain unchanged.
++  if (logProbs.shape(1) < L + repeats + 2)
++    throw std::runtime_error("CPU control requires T>=tokens+adjacent_repeats+2.");
+ 
+   const auto B = logProbs.shape(0);
+   const auto T = logProbs.shape(1);
+@@ -146,6 +176,6 @@
+   return std::make_tuple(paths, scores);
+ }
+ 
+-PYBIND11_MODULE(ctc_forced_aligner, m) {
++PYBIND11_MODULE(ffa_corrected_ctc_cpp, m) {
+     m.def("forced_align", &compute, "Compute forced alignment.");
+ }

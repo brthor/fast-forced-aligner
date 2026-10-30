@@ -1,0 +1,57 @@
+name: Tests and package checks
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: CPU tests and distributions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install build tools and CPU PyTorch
+        run: |
+          python -m pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install build twine matplotlib==3.10.6
+      - name: Build wheel and source archive
+        run: python -m build
+      - name: Check package metadata and contents
+        run: |
+          python -m twine check --strict dist/*
+          python .github/scripts/check_distributions.py
+      - name: Install the built wheel and check dependencies
+        run: |
+          wheels=(dist/*.whl)
+          python -m pip install "${wheels[0]}[test]"
+          python -m pip check
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          import fast_forced_aligner
+          from fast_forced_aligner import align, emission_validity, load_extension
+
+          assert not Path(fast_forced_aligner.__file__).resolve().is_relative_to(Path.cwd())
+          assert not any(name.startswith(("transformers", "flash_attn")) for name in sys.modules)
+          PY
+      - name: Run core tests (CUDA tests report skips)
+        run: python -m pytest --strict-markers -ra tests
+      - name: Run offline benchmark harness tests
+        env:
+          PYTHONPATH: benchmarks
+        run: python -m pytest --strict-markers -ra -m "not external_backend" benchmarks/tests

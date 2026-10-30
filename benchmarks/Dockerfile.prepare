@@ -1,0 +1,19 @@
+# Build separately from the comparator image: acoustic inference is untimed.
+ARG PYTORCH_IMAGE=pytorch/pytorch:2.8.0-cuda12.8-cudnn9-devel@sha256:a7103283ea7113e10ae5d014bd2342acebda0bc53164b2f7b1dd6eb7a766bdb6
+FROM ${PYTORCH_IMAGE}
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
+    BENCHMARK_CACHE=/cache HOME=/cache/home HF_HOME=/cache/huggingface \
+    NEMO_CACHE_DIR=/cache/nemo
+WORKDIR /workspace/publish/benchmarks
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libsndfile1 && \
+    rm -rf /var/lib/apt/lists/*
+COPY benchmarks/requirements-prepare*.txt /opt/
+# The full environment lock includes transitive and base-image Python packages.
+# Disable dependency resolution so an unpinned package cannot enter the image.
+RUN python -m pip install --no-cache-dir --no-deps \
+        -r /opt/requirements-prepare.txt -r /opt/requirements-prepare-lock.txt && \
+    python -m pip check && \
+    python -c 'import torch, transformers, pyarrow, soundfile; from nemo.collections.asr.models import EncDecCTCModelBPE; assert torch.__version__.split("+")[0] == "2.8.0"; assert torch.version.cuda == "12.8"'
+COPY benchmarks /workspace/publish/benchmarks
+CMD ["python", "regenerate.py", "--help"]

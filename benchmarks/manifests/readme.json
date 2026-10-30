@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "suite": "readme",
+  "version": "20261027-v1",
+  "bundle_filename": "fast-forced-aligner-readme-inputs-20261027-v1.zip",
+  "bundle_sha256": "872cc7541a4902981ce3aaf7504fc533b00fa42919db561f08f2c7d5f0719da4",
+  "bundle_bytes": 515193175,
+  "manifest_sha256": "8a5ea1837cada547f963e41b0b554609aa2893efbdc2c8bfe87f07d6e5df893a",
+  "entries": 3553,
+  "unique_arrays": 3482,
+  "cohorts": [
+    {
+      "name": "natural-dev64",
+      "entries": 64
+    },
+    {
+      "name": "natural1024",
+      "entries": 1024
+    },
+    {
+      "name": "long64",
+      "entries": 64
+    },
+    {
+      "name": "heldout-natural2048",
+      "entries": 2048
+    },
+    {
+      "name": "heldout-subword256",
+      "entries": 256
+    },
+    {
+      "name": "heldout-long16",
+      "entries": 14
+    },
+    {
+      "name": "fresh-long40",
+      "entries": 33
+    },
+    {
+      "name": "width-fresh-long40",
+      "entries": 34
+    },
+    {
+      "name": "synthetic-frames2048",
+      "entries": 8
+    },
+    {
+      "name": "synthetic-flat-ties",
+      "entries": 8
+    }
+  ],
+  "hosting": "No default download URL is published. Supply the release bundle locally or an explicit HTTPS URL.",
+  "overlaps": "natural-dev64 is a subset of natural1024; eight flat-tie entries share identical arrays. LibriSpeech natural and subword cohorts share 256 source recordings but have different emissions. Joined long clips use source recordings from the natural pool.",
+  "historical_campaign_sha256": "3c2930d6c8f410ed7a9416d454258f5d98546e8e5758dce84fef9b8c3cda933f",
+  "regeneration": "The bundle manifest contains source IDs, transcript text, model and dataset revisions when originally pinned, inference settings, source-selection plans, and recorded exclusions. Regeneration on different software/hardware may change emissions; only this checked frozen bundle reproduces the published suite exactly."
+}

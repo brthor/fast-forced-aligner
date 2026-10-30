@@ -1,0 +1,10 @@
+include README.md CITATION.cff LICENSE NOTICE
+recursive-include assets *.png *.svg
+recursive-include examples *.py *.md *.sh *.txt Dockerfile
+recursive-include tests *.py
+recursive-include src/fast_forced_aligner/csrc *.cu
+include src/fast_forced_aligner/py.typed
+recursive-include benchmarks *.py *.md *.sh *.txt *.json *.patch *.cpp LICENSE* Dockerfile Dockerfile.prepare
+prune benchmarks/.local
+prune benchmarks/results
+prune benchmarks/reports

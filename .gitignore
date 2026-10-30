@@ -1,0 +1,14 @@
+.local/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+.venv/
+
+benchmarks/results/
+benchmarks/reports/
+.env
+.env.*
+!.env.example

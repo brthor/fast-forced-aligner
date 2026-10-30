@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fast_forced_aligner"
+version = "0.1.0"
+description = "Batched CUDA CTC forced alignment with optimized and conventional DP modes"
+authors = [{name = "Bryan Thornbury"}]
+readme = "README.md"
+# The source archive includes the BSD-licensed benchmark comparator.
+license = "MIT AND BSD-2-Clause"
+license-files = ["LICENSE", "NOTICE", "benchmarks/patches/LICENSE.ctc-forced-aligner"]
+requires-python = ">=3.11"
+dependencies = ["torch==2.8.0", "ninja>=1.11"]
+
+[project.urls]
+Repository = "https://github.com/brthor/fast-forced-aligner"
+Documentation = "https://github.com/brthor/fast-forced-aligner#readme"
+Issues = "https://github.com/brthor/fast-forced-aligner/issues"
+
+[project.optional-dependencies]
+test = ["pytest==8.4.2", "numpy==2.2.6"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["fast_forced_aligner"]
+namespaces = false
+
+[tool.setuptools.package-data]
+fast_forced_aligner = ["csrc/*.cu", "py.typed"]
+
+[tool.pytest.ini_options]
+markers = ["external_backend: requires external comparison toolkits or downloaded upstream code"]
