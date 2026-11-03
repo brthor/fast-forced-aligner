@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use Fast Forced Aligner in your research, please cite this software."
 type: software
-license: Apache-2.0
+license: MIT
 title: "Fast Forced Aligner"
 authors:
   - family-names: "Thornbury"
